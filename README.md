@@ -1,6 +1,6 @@
-# Using the Graph Skills in GitHub Copilot — Repo-Agnostic Setup
+# Codebase into Trustworthy Documentation
 
-At a high level, both skills turn a codebase into trustworthy documentation and diagrams — the emphasis being on trustworthy.
+ Turn a codebase into trustworthy documentation and diagrams — the emphasis being on trustworthy.
 
 - This guide sets up the `azgraph` and `codegraph` skills as **native GitHub Copilot Agent Skills** living in your **user profile**, so Copilot can use them in any repo.
 
@@ -154,39 +154,6 @@ echo ".graph-output/" >> ~/.config/git/ignore     # or your global core.excludes
 
 ---
 
-## 9. How the skills stay repo-agnostic
 
-Three design points make one central install work everywhere:
-
-1. **Scripts take the target as an argument.** `scan_azure.py --roots <path>` and `build_graph.py --root <repo-root>` point at whatever repo is open — the skill isn't bound to any repo.
-2. **`SKILL.md` references its own scripts by relative path** (`./scripts/...`), so the skill folder is self-contained wherever it's placed.
-3. **Output is written next to the open workspace, not inside the skill.** The skill stays clean and reusable; results land where you're working.
-
-In the two `SKILL.md` files you'll see `<skill-dir>` and `<workspace>` placeholders in the example commands — Copilot's agent substitutes the real absolute paths at run time (the skill directory it loaded from, and the folder you have open).
-
----
-
-## 10. Verifying, troubleshooting, updating
-
-**Verify it's installed:** type `/skills` in Copilot Chat (or *Configure Chat → Skills*). `azgraph` and `codegraph` should be listed. Then in agent mode ask *"build a call graph for this repo"* and confirm the skill activates in the chat.
-
-| Symptom | Cause | Fix |
-|---|---|---|
-| Skills don't appear in `/skills` | Wrong folder, or `SKILL.md` nested one level too deep | Ensure `~/.copilot/skills/<skill>/SKILL.md` (not `.../<skill>/<skill>/SKILL.md`); reload window |
-| Skill never activates | Not in agent mode, or free tier | Switch to agent mode on a paid Copilot plan |
-| Skill silently fails to load | A namespace prefix was added to the `name:` field | `name` must be plain (`azgraph`), never `myorg/azgraph` or `myorg:azgraph` |
-| `codegraph`: a language is missing | Its grammar didn't install | Re-run `setup_env.sh`; check its "UNAVAILABLE" line; that language is skipped until fixed |
-| `codegraph`: `id_conflicts > 0` after merge | Inconsistent chunk roots or duplicate labels | Rebuild chunks with consistent roots and unique repo-relative labels |
-| `azgraph`: repo shows `kind=unknown` | No Azure artefacts (or `host.json` not at repo root) | Expected for non-Azure repos; check `host.json` location |
-| Monorepo subfolder skips the skills | Open folder isn't the repo root | Set `chat.useCustomizationsInParentRepositories: true` |
-| `.mmd` won't render | No Mermaid extension | Install a Mermaid preview extension or use mermaid.live |
-
-**Update a skill:** replace the `azgraph/` or `codegraph/` folder in `~/.copilot/skills/` (or the shared location from §5) with the new version and reload. Because it's centralised, that's the only copy to touch — no per-repo updates.
-
-**Uninstall:** delete the skill folder from `~/.copilot/skills/` (and remove the `chat.agentSkillsLocations` entry if you used a shared folder). For `codegraph`, also delete its `.venv`.
-
----
-
-### One-line summary
 
 Unzip the two skill folders into `~/.copilot/skills/` (or a shared folder referenced by `chat.agentSkillsLocations`), run `codegraph`'s one-time `setup_env.sh`, then ask Copilot in agent mode — in *any* repo — for an Azure landscape or a call graph. Nothing is committed per repo, and updates happen in one place.
