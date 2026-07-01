@@ -1,13 +1,8 @@
 # Using the Graph Skills in GitHub Copilot — Repo-Agnostic Setup
 
-At a high level, both skills turn a codebase into trustworthy documentation and diagrams — the emphasis being on trustworthy. Their whole design principle is that every statement traces back to a real file and line; anything they can't verify from the source is labeled "unresolved" rather than guessed at. They read files only — no code execution, no external API calls.
-azgraph — the Azure landscape mapper. Point it at one or more repos and it answers "what Azure stuff is in here and how is it wired together?" It finds Azure Function Apps (and their functions, triggers, and bindings), Azure DevOps pipelines (stages, jobs, service connections, variable groups, templates), ARM/Bicep infrastructure, and package dependencies (NuGet/npm/pip) — then it maps how repos connect to each other (e.g. one repo consuming a package another produces, or a pipeline referencing a shared template). Output is a structured JSON graph plus Mermaid mind maps and per-repo Markdown docs. It's a static scan, so it describes structure, not runtime behavior — it won't tell you what's running or what's in a queue.
-codegraph — the call-graph extractor. This one works at the code level, across 12 languages, and answers "which functions call which, and where?" It uses real AST parsing (tree-sitter, not regex) to build a function-level call graph: every function, where it's defined, and every call it makes. Calls it can resolve to a definition in your code become edges; calls it can't (external libraries, dynamic dispatch) are honestly reported as unresolved rather than invented. It's built to scale to large monorepos by chunking by package boundary and then resolving cross-package calls when merging. Output includes coverage stats, the highest fan-in/fan-out functions (a good proxy for "what's central to this codebase"), per-function call listings, and a Mermaid diagram of the most connected parts.
-How they relate: azgraph gives you the deployment/architecture wiring of an Azure project; codegraph gives you the internal code structure of any repo. On an Azure microservice you'd run both — one for the Azure landscape, one for the function-level call flow.
+At a high level, both skills turn a codebase into trustworthy documentation and diagrams — the emphasis being on trustworthy.
 
-**Install once per machine (or once for the whole team). Available in every repository. Nothing committed per repo.**
-
-This guide sets up the `azgraph` and `codegraph` skills as **native GitHub Copilot Agent Skills** living in your **user profile**, so Copilot can use them in any repo.
+- This guide sets up the `azgraph` and `codegraph` skills as **native GitHub Copilot Agent Skills** living in your **user profile**, so Copilot can use them in any repo.
 
 ---
 
